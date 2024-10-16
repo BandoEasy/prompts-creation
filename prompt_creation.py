@@ -4,6 +4,7 @@ import os
 # Global paths to your files
 Data_path = "/Users/it/Desktop/Parsing json/data_questions_section.json"
 PDF_in_JSON_directory = "/Users/it/Desktop/js"
+Output_JSON_path = "/Users/it/Desktop/Parsing json/output_data_grouped.json"  # Path to save the grouped result JSON
 
 def load_file(file_path):
     """Loads a JSON file from the specified path."""
@@ -24,31 +25,34 @@ def get_matching_sections_contents(possible_sections, sections):
             matching_sections.append((section, sections[section]))
     return matching_sections
 
-def create_result_strings(data_value, questions, matching_sections, filename):
+def create_json_objects(questions, matching_sections, filename):
     """
-    Constructs the result strings for each matching section.
-    :param data_value: The 'data' field from the first file.
+    Constructs a list of JSON objects for each matching section.
     :param questions: A list of questions from the first file.
     :param matching_sections: A list of tuples containing (section_name, section_content).
     :param filename: The name of the file being processed.
-    :return: A list of formatted result strings, one for each matching section, including the file source and section name.
+    :return: A list of JSON objects for each matching section, excluding 'data_value'.
     """
-    questions_str = ', '.join(questions)  # Join questions into a single string
-    result_strings = []
+    json_objects = []
 
     for section_name, section_content in matching_sections:
-        result_string = f"{data_value}: {questions_str} in \n\tsection '{section_name}' \n\t(source: {filename}):\n {section_content}\n"
-        result_strings.append(result_string)
+        json_object = {
+            "questions": questions,
+            "section_name": section_name,
+            "section_content": section_content,
+            "source_filename": filename
+        }
+        json_objects.append(json_object)
 
-    return result_strings
+    return json_objects
 
 def process_files(file1_data, file2_data, filename):
     """
-    Processes the data from the two files and returns a dictionary that groups the strings by the 'data' field in file 1.
+    Processes the data from the two files and returns a dictionary that groups the JSON objects by the 'data' field in file 1.
     :param file1_data: Data from the first JSON file.
     :param file2_data: Data from the second JSON file.
-    :param filename: The name of the file being processed (to include in the result strings).
-    :return: A dictionary with 'data' as keys and lists of strings as values.
+    :param filename: The name of the file being processed (to include in the JSON objects).
+    :return: A dictionary with 'data' as keys and lists of JSON objects as values.
     """
     sections = file2_data.get("sections", {})  # Get sections from file 2
     grouped_results = {}  # Dictionary to group results by the 'data' field
@@ -62,14 +66,14 @@ def process_files(file1_data, file2_data, filename):
         # Get all matching sections based on the possible sections
         matching_sections = get_matching_sections_contents(possible_sections, sections)
 
-        # Formulate the result strings
-        result_strings = create_result_strings(data_value, questions, matching_sections, filename)
+        # Formulate the JSON objects
+        result_json_objects = create_json_objects(questions, matching_sections, filename)
 
-        # Group the result strings by the 'data' field
+        # Group the result JSON objects by the 'data' field
         if data_value in grouped_results:
-            grouped_results[data_value].extend(result_strings)
+            grouped_results[data_value].extend(result_json_objects)
         else:
-            grouped_results[data_value] = result_strings
+            grouped_results[data_value] = result_json_objects
 
     return grouped_results
 
@@ -107,14 +111,27 @@ def process_multiple_files(file1_data, json_directory):
             # Process the files and get grouped results, passing the filename
             results = process_files(file1_data, file2_data, filename)
 
-            # Merge the results into the combined results
-            for data_value, result_strings in results.items():
+            # Merge the results into the combined results, grouped by data_value
+            for data_value, result_json_objects in results.items():
                 if data_value in combined_results:
-                    combined_results[data_value].extend(result_strings)
+                    combined_results[data_value].extend(result_json_objects)
                 else:
-                    combined_results[data_value] = result_strings
+                    combined_results[data_value] = result_json_objects
 
     return combined_results
+
+def save_results_to_json(result_data, output_path):
+    """
+    Saves the processed results to a JSON file.
+    :param result_data: The final processed data to be saved.
+    :param output_path: The path where the result JSON file will be saved.
+    """
+    try:
+        with open(output_path, 'w') as outfile:
+            json.dump(result_data, outfile, indent=4)
+        print(f"Results saved to {output_path}")
+    except Exception as e:
+        print(f"Error saving results to {output_path}: {e}")
 
 def main():
     # Load data from the first file
@@ -127,15 +144,11 @@ def main():
     # Process multiple JSON files from the specified directory
     grouped_results = process_multiple_files(file1_data, PDF_in_JSON_directory)
 
-    # Print the grouped results
+    # Save the grouped results to a new JSON file
     if not grouped_results:
         print("No results to display.")
     else:
-        for data_value, result_strings in grouped_results.items():
-            print(f"{data_value}:")
-            for result_string in result_strings:
-                print(f"  - {result_string}")
-            print()  # Add a newline for better readability
+        save_results_to_json(grouped_results, Output_JSON_path)
 
 if __name__ == "__main__":
     main()
