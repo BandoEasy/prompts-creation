@@ -1,7 +1,8 @@
 import json
 
+# Global paths to your files
 Data_path = "/Users/it/Desktop/Parsing json/data_questions_section.json"
-PDF_in_JSON_path = " "
+PDF_in_JSON_path = "/Users/it/Desktop/JSONs/ReL.1310.json"
 
 def load_file(file_path):
     """Loads a JSON file from the specified path."""
@@ -26,22 +27,22 @@ def get_matching_sections_contents(possible_sections, sections):
     return matching_sections
 
 def create_result_strings(data_value, questions, matching_sections):
-        """
-        Constructs the result strings for each matching section.
+    """
+    Constructs the result strings for each matching section.
 
-        :param data_value: The 'data' field from the first file.
-        :param questions: A list of questions from the first file.
-        :param matching_sections: A list of matching section contents.
-        :return: A list of formatted result strings, one for each matching section.
-        """
-        questions_str = ', '.join(questions)  # Join questions into a single string
-        result_strings = []
+    :param data_value: The 'data' field from the first file.
+    :param questions: A list of questions from the first file.
+    :param matching_sections: A list of matching section contents.
+    :return: A list of formatted result strings, one for each matching section.
+    """
+    questions_str = ', '.join(questions)  # Join questions into a single string
+    result_strings = []
 
-        for section_content in matching_sections:
-            result_string = f"{data_value}: {questions_str} in the following text: {section_content}"
-            result_strings.append(result_string)
+    for section_content in matching_sections:
+        result_string = f"{data_value}: {questions_str} in the following text: {section_content}"
+        result_strings.append(result_string)
 
-        return result_strings
+    return result_strings
 
 
 def process_files(file1_data, file2_data):
@@ -76,13 +77,9 @@ def process_files(file1_data, file2_data):
     return grouped_results
 
 def main():
-    # Paths to your files
-    file1_path = 'file1.json'
-    file2_path = 'file2.json'
-
-    # Load data from both files
-    file1_data = load_file(file1_path)
-    file2_data = load_file(file2_path)
+    # Use the global paths to load the data
+    file1_data = load_file(Data_path)
+    file2_data = load_file(PDF_in_JSON_path)
 
     # Process and generate grouped output
     grouped_results = process_files(file1_data, file2_data)
@@ -97,4 +94,3 @@ def main():
 # Call the main function to execute the program
 if __name__ == "__main__":
     main()
-
