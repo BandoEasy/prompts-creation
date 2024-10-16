@@ -1,114 +1,177 @@
-# README: JSON Parsing for Fine-Tuning ChatGPT Model
+# JSON Parsing and Grouping for Fine-Tuning Data
 
-## Overview
+This project processes and extracts information from multiple JSON files, and groups relevant sections based on predefined questions. The grouped data is then saved in a structured JSON format, which can be used for various purposes such as fine-tuning AI models like GPT or for other data analysis tasks.
 
-This project processes JSON files to extract specific sections of text and format them into prompts that can be used for fine-tuning a GPT-based model (like ChatGPT). The extracted data includes questions, relevant sections of text, and metadata such as the file source and section names. The formatted output is intended for use in creating training data to improve the performance of a fine-tuned language model.
+## Features
 
-### Key Components:
+- **Parsing JSON Files**: The project takes in a directory of JSON files (representing PDF documents) and another JSON file containing questions and data categories.
+- **Section Matching**: For each `data_value` (such as a category), it matches sections from the PDF JSON files based on predefined possible sections.
+- **Grouping and Formatting**: The extracted data (including questions, sections, and metadata) is grouped by the `data_value`, formatted into JSON objects, and saved as a new JSON file.
+- **Easy Integration**: The output JSON is formatted to be easily consumed by downstream tasks, such as model fine-tuning or other processing.
 
-- **JSON Input Files**:
-  - **File 1 (`data_questions_section.json`)**: This file contains a list of data entries, each of which includes a `data` field, a list of `questions`, and a list of `Possible sections`. The `Possible sections` are the section names we expect to find in the second set of JSON files.
-  - **Multiple PDF JSON Files**: These files represent converted PDF documents. Each file contains a `sections` object where different sections of the document are labeled and stored.
+## Input Data
 
-- **Output**: The script outputs a collection of formatted strings that can be used as training data prompts. Each string consists of a data field, questions, a section name, and text extracted from the PDF JSON files, along with the filename of the source.
+There are two main types of input files:
 
-## Purpose
+1. **Questions JSON (`data_questions_section.json`)**:
+    - Contains a list of questions and their corresponding `data_value`.
+    - Specifies which sections of the PDF documents to look for.
+    - Example structure:
+      ```json
+      [
+        {
+          "data": "Funding Options",
+          "questions": [
+            "What types of funding are available?",
+            "What is the interest rate?"
+          ],
+          "Possible sections": [
+            "Funding Process",
+            "Interest Rate"
+          ]
+        }
+      ]
+      ```
 
-The primary purpose of this script is to generate high-quality prompt-response data for fine-tuning a language model like ChatGPT. The output strings from this project are designed to be prompts in the form of questions with contextually relevant text from various documents. This allows for fine-tuning the model to improve its ability to answer specific questions based on real-world documents.
+2. **PDF JSON Files**:
+    - These represent the contents of PDF documents, converted to JSON.
+    - Contains sections of text that will be extracted and matched to the `data_value` and questions.
+    - Example structure:
+      ```json
+      {
+        "sections": {
+          "Funding Process": "The process of funding is ...",
+          "Interest Rate": "The interest rate is 3%..."
+        }
+      }
+      ```
 
-## Code Structure
+## Output Data
 
-### 1. `load_file(file_path)`
+The result of this project is a single JSON file where data is grouped by `data_value`. The JSON file is structured like this:
 
-This function loads a JSON file from a specified path and returns its content as a Python dictionary.
-
-### 2. `get_matching_sections_contents(possible_sections, sections)`
-
-- **Input**: A list of possible section names from the first JSON file and a dictionary of sections from the PDF JSON file.
-- **Output**: A list of tuples containing both section names and section content that match the section names listed in `possible_sections`.
-- **Purpose**: To identify and extract relevant sections from the second JSON file that match the section names specified in the first file.
-
-### 3. `create_result_strings(data_value, questions, matching_sections, filename)`
-
-- **Input**: 
-  - `data_value`: The `data` field from the first JSON file.
-  - `questions`: A list of questions related to that data.
-  - `matching_sections`: A list of tuples of section names and their content from the second JSON file.
-  - `filename`: The name of the PDF JSON file from which the section was extracted.
-- **Output**: A list of formatted strings, each containing the `data_value`, `questions`, `section_name`, `section_content`, and the `filename`.
-- **Purpose**: To generate the formatted prompt strings that will be used as training data for fine-tuning the model.
-
-### 4. `process_files(file1_data, file2_data, filename)`
-
-- **Input**: 
-  - `file1_data`: Content from the first JSON file.
-  - `file2_data`: Content from a PDF JSON file.
-  - `filename`: The name of the PDF JSON file.
-- **Output**: A dictionary of grouped results, where the keys are the `data` field and the values are lists of formatted prompt strings.
-- **Purpose**: To process a pair of JSON files (one from each source) and extract the relevant information for prompt creation.
-
-### 5. `process_multiple_files(file1_data, json_directory)`
-
-- **Input**: 
-  - `file1_data`: Content from the first JSON file.
-  - `json_directory`: The directory containing multiple PDF JSON files.
-- **Output**: A dictionary of combined results from all the processed PDF JSON files.
-- **Purpose**: To process multiple JSON files from a directory, combine their results, and return the final set of formatted prompts for fine-tuning.
-
-### 6. `main()`
-
-- The main function that orchestrates the entire process:
-  1. Loads the first JSON file.
-  2. Processes multiple PDF JSON files from the specified directory.
-  3. Prints the formatted prompt strings that can be used for fine-tuning.
-
-## Output Format
-
-The script generates strings in the following format:
-
-```
-<data_value>: <questions> in section '<section_name>' (source: <filename>):
-<section_content>
-```
-
-### Example:
-
-```text
-Customer Support: What are the available channels of support? in section 'Support Channels' (source: support_document_001.json):
-The available channels for customer support include phone, email, and live chat. These services are available 24/7.
+```json
+{
+    "Funding Options": [
+        {
+            "questions": [
+                "What types of funding are available?",
+                "What is the interest rate?"
+            ],
+            "section_name": "Funding Process",
+            "section_content": "The process of funding is ...",
+            "source_filename": "funding_document_001.json"
+        },
+        {
+            "questions": [
+                "What types of funding are available?",
+                "What is the interest rate?"
+            ],
+            "section_name": "Interest Rate",
+            "section_content": "The interest rate is 3%...",
+            "source_filename": "funding_document_002.json"
+        }
+    ]
+}
 ```
 
-## Usage
+## Prerequisites
 
-### Prerequisites
+To use this project, you'll need the following:
 
 - Python 3.x
-- JSON files structured as described above.
+- JSON files for both:
+  - A file containing questions and section details (`data_questions_section.json`)
+  - A directory of JSON files representing PDF documents.
 
-### Running the Script
+## How It Works
 
-1. Set the correct paths for the `Data_path` (for `data_questions_section.json`) and `PDF_in_JSON_directory` (for the directory containing your JSON files) in the script.
-2. Run the script by executing:
+1. **Loading Files**: The script loads the main JSON file containing the questions (`data_questions_section.json`) and iterates over multiple PDF JSON files in the specified directory.
+2. **Section Matching**: It checks each file for sections that match the `Possible sections` from the questions file.
+3. **JSON Object Creation**: For each matching section, a JSON object is created that contains:
+   - The `questions`
+   - The `section_name`
+   - The `section_content`
+   - The `source_filename` of the document from which the section was extracted.
+4. **Grouping**: The JSON objects are grouped by the `data_value` and saved to a new JSON file.
+5. **Saving Results**: The final grouped JSON is saved to a specified output path.
 
+## How to Use
+
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/your-username/your-repo.git
+   ```
+
+2. **Prepare Your Data**:
+   - Place the questions file (`data_questions_section.json`) in the appropriate directory.
+   - Ensure you have a directory containing the PDF JSON files you want to process.
+
+3. **Modify the Paths**:
+   - In the script, modify the following paths to point to your files:
+     - `Data_path`: Path to the questions JSON file.
+     - `PDF_in_JSON_directory`: Path to the directory containing the PDF JSON files.
+     - `Output_JSON_path`: Path where you want to save the final output.
+
+4. **Run the Script**:
    ```bash
    python script_name.py
    ```
 
-3. The script will process all JSON files in the specified directory and print the formatted strings to the console.
+5. **Check the Output**:
+   - Once the script has completed, the grouped results will be saved in the file specified by `Output_JSON_path`.
 
-### Customization
+## Code Overview
 
-- You can modify the structure of the formatted strings in the `create_result_strings` function based on the specific format required for fine-tuning your model.
-- The script is designed to handle multiple files and errors gracefully, but you can further enhance it with logging or output redirection if needed.
+### Functions
 
-## Contribution
+- **`load_file(file_path)`**:
+  - Loads a JSON file from the specified path and returns its content.
+  
+- **`get_matching_sections_contents(possible_sections, sections)`**:
+  - Checks for section matches between the `possible_sections` from the questions JSON file and the `sections` in a PDF JSON file. Returns the matching sections.
 
-Feel free to submit issues or pull requests to improve this project or add more features like support for additional file formats, enhanced error handling, or more customizable prompt formats.
+- **`create_json_objects(questions, matching_sections, filename)`**:
+  - Creates JSON objects for each matched section, including `questions`, `section_name`, `section_content`, and `source_filename`.
+
+- **`process_files(file1_data, file2_data, filename)`**:
+  - For each entry in the questions JSON, it looks for matching sections in the PDF JSON files and creates the corresponding JSON objects. These objects are grouped by the `data_value`.
+
+- **`process_multiple_files(file1_data, json_directory)`**:
+  - Iterates through the directory of PDF JSON files, processing each file and grouping the results by the `data_value`.
+
+- **`save_results_to_json(result_data, output_path)`**:
+  - Saves the final grouped JSON data to the specified output file.
+
+### Example Execution
+
+```python
+# Load data from the first file
+file1_data = load_file(Data_path)
+
+# Process multiple JSON files from the specified directory
+grouped_results = process_multiple_files(file1_data, PDF_in_JSON_directory)
+
+# Save the grouped results to a new JSON file
+save_results_to_json(grouped_results, Output_JSON_path)
+```
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Contributing
+
+1. Fork the repository.
+2. Create your feature branch: `git checkout -b feature/your-feature`.
+3. Commit your changes: `git commit -m 'Add your feature'`.
+4. Push to the branch: `git push origin feature/your-feature`.
+5. Open a pull request.
+
+## Contact
+
+For questions or support, feel free to open an issue in this repository.
 
 ---
 
-This README provides an overview of the project's purpose, code structure, and instructions for usage. It is designed for developers looking to generate training data for fine-tuning GPT models based on custom document sets.
+This README file should provide a comprehensive guide for using the project. You can expand on it with more details if necessary, such as providing troubleshooting steps or adding more examples. Let me know if you need anything else!
