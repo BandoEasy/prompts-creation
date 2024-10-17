@@ -5,6 +5,7 @@ import os
 Data_path = "/Users/it/Desktop/Parsing json/data_questions_section.json"
 PDF_in_JSON_directory = "/Users/it/Desktop/js"
 Output_JSON_path = "/Users/it/Desktop/Parsing json/output_data_grouped.json"  # Path to save the grouped result JSON
+Prompt_Completion_JSON_path = "/Users/it/Desktop/Parsing json/output_prompt_completion.json"  # New path for prompt-completion JSON
 
 def load_file(file_path):
     """Loads a JSON file from the specified path."""
@@ -120,6 +121,25 @@ def process_multiple_files(file1_data, json_directory):
 
     return combined_results
 
+def create_prompt_completion_json(grouped_data):
+    """
+    Creates JSON objects in the format {"prompt": "", "completion": ""} from the grouped data.
+    :param grouped_data: The grouped data generated from the process_files function.
+    :return: A list of JSON objects where 'prompt' contains the formatted string and 'completion' is empty.
+    """
+    prompt_completion_data = []
+
+    for data_value, json_objects in grouped_data.items():
+        for obj in json_objects:
+            prompt_string = f"{data_value}:{obj['questions']} from the following text:{obj['section_content']}"
+            prompt_completion_obj = {
+                "prompt": prompt_string,
+                "completion": ""
+            }
+            prompt_completion_data.append(prompt_completion_obj)
+
+    return prompt_completion_data
+
 def save_results_to_json(result_data, output_path):
     """
     Saves the processed results to a JSON file.
@@ -149,6 +169,10 @@ def main():
         print("No results to display.")
     else:
         save_results_to_json(grouped_results, Output_JSON_path)
+
+    # Create and save the prompt-completion JSON file
+    prompt_completion_data = create_prompt_completion_json(grouped_results)
+    save_results_to_json(prompt_completion_data, Prompt_Completion_JSON_path)
 
 if __name__ == "__main__":
     main()
