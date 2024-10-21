@@ -6,32 +6,74 @@
 },
   {
   "data": "Tipologia di agevolazione",
-  "questions": [" - Definisci il tipo di agevolazione offerta, come finanziamenti agevolati, contributi a fondo perduto, incentivi fiscali o crediti d’imposta.\n- Specifica il tasso di interesse agevolato, se applicabile, e le condizioni di rimborso (ad es. durata, preammortamento, modalità di pagamento).\n- Indica se è prevista una combinazione di diverse forme di aiuto (ad es. una parte a fondo perduto e una parte come prestito).","Answer in JSON format"],
+  "questions": [" Definisci il tipo di agevolazione offerta, come finanziamenti agevolati, contributi a fondo perduto, incentivi fiscali o crediti d’imposta.
+- Specifica il tasso di interesse agevolato, se applicabile, e le condizioni di rimborso (ad es. durata, preammortamento, modalità di pagamento).
+- Indica se è prevista una combinazione di diverse forme di aiuto (ad es. una parte a fondo perduto e una parte come prestito).","Answer in JSON format"],
   "Possible sections": ["Tipologia di Procedura", "Cofinanziamento", "Cauzioni e Garanzie Richieste"],
     "Response formats": [" Return in JSON format"," "," "]
 },
 
 {
   "data": "Requisiti di accesso",
-  "questions": [" - Dettaglia i requisiti necessari per accedere all'agevolazione, come:\n    - Dimensione dell’impresa (micro, PMI, grande impresa).\n    - Localizzazione geografica (es. regioni specifiche o aree svantaggiate).\n    - Certificazioni richieste (ambientali, di sostenibilità, ISO, ecc.).\n    - Settore di appartenenza dell’impresa (industria, servizi, agricoltura, ecc.).\n    - Composizione societaria (giovanile, femminile, innovativa).\n- Includi eventuali criteri speciali, come la necessità di fatturato estero, unità produttive in aree specifiche, o adesione a politiche ESG.","Answer in JSON format"],
+  "questions": [" - Dettaglia i requisiti necessari per accedere all'agevolazione, come:
+    - Dimensione dell’impresa (micro, PMI, grande impresa).
+    - Localizzazione geografica (es. regioni specifiche o aree svantaggiate).
+    - Certificazioni richieste (ambientali, di sostenibilità, ISO, ecc.).
+    - Settore di appartenenza dell’impresa (industria, servizi, agricoltura, ecc.).
+    - Composizione societaria (giovanile, femminile, innovativa).
+- Includi eventuali criteri speciali, come la necessità di fatturato estero, unità produttive in aree specifiche, o adesione a politiche ESG.","Answer in JSON format"],
   "Possible sections": ["Beneficiari","Criteri di selezione","Modalità di presentazione della domanda","Documentazione richiesta","Termini per la presentazione della domanda","Tipologia di Procedura","Modalità di Presentazione delle Offerte"]
 },
 
   {
   "data": "Spese ammissibili",
-  "questions": ["- Definisci le spese che possono essere finanziate, come investimenti in macchinari, tecnologie, formazione, ricerca e sviluppo, o progetti di sostenibilità.\n- Specifica eventuali limiti o soglie minime/massime di investimento ammissibile." ,"Answer in JSON format"],
+  "questions": ["Descrizione della procedura di analisi:**
+
+L'intelligenza artificiale deve esaminare il testo del bando e identificare esclusivamente le categorie di spesa menzionate tra le seguenti:
+
+1. Personale dipendente
+2. Personale esterno/consulenza
+3. Formazione
+4. Attrezzature e macchinari
+5. Affitto
+6. Utenze
+7. Acquisto immobili
+8. Opere edili e ristrutturazione
+9. Arredi
+10. Impianti di produzione
+11. Polizze assicurative
+12. Spese legali
+13. Spese amministrative
+14. Marketing
+15. Partecipazione a fiere ed eventi
+16. Spese di logistica
+17. Software
+18. Digitalizzazione
+19. Studi di fattibilità
+20. Ricerca di mercato
+21. Registrazione brevetto
+22. Registrazione marchio
+23. Certificazione
+
+L'obiettivo è individuare esattamente quali di queste categorie sono menzionate nel bando, senza fornire ulteriori informazioni. Per ogni categoria citata o implicitamente presente, l'IA deve riportare solo il nome della categoria. Ad esempio, se nel testo si fa riferimento a "campagne SEO", l'IA deve selezionare la categoria "Marketing".
+
+Attenzione particolare va posta a formulazioni ambigue o generiche, dove i riferimenti potrebbero ricadere in più categorie. L'IA deve assegnare correttamente tali riferimenti alla categoria appropriata.
+
+L'elenco delle sole categorie identificate nel testo del bando, senza preamboli, commenti o spiegazioni.." ,"Answer in JSON format"],
   "Possible sections": ["finanziamenti ammessi","progetti finanziabili", "iniziative ammissibili", "costi ammissibili","Eligible Interventions","Interventi ammissibili"]
 },
   {
   "data": "Massimali e limiti",
-  "questions": ["Indica il massimo importo finanziabile, differenziando in base alla dimensione dell’impresa (micro, PMI, grande impresa).Inserisci eventuali limiti in percentuale del fatturato o dei ricavi aziendali medi degli ultimi bilanci. ","Answer in JSON format"],
+  "questions": ["- Indica il massimo importo finanziabile, differenziando in base alla dimensione dell’impresa (micro, PMI, grande impresa).
+- Inserisci eventuali limiti in percentuale del fatturato o dei ricavi aziendali medi degli ultimi bilanci.","Answer in JSON format"],
   "Possible sections": ["Requisiti di Partecipazione","Obblighi del beneficiario", "Durata del progetto","Vincoli", "Sanzioni e decadenza", "Durata dell'Appalto", "Termine per la Presentazione delle Offerte"]
 },
 
 
    {
   "data": "Durata e modalità di rimborso",
-  "questions": ["- Fornisci la durata del finanziamento o dell’agevolazione, distinguendo tra periodo di preammortamento (se applicabile) e durata complessiva.\n- Descrivi il piano di rimborso, specificando il numero e la frequenza delle rate. ", "Answer in JSON format"],
+  "questions": ["-- Fornisci la durata del finanziamento o dell’agevolazione, distinguendo tra periodo di preammortamento (se applicabile) e durata complessiva.
+- Descrivi il piano di rimborso, specificando il numero e la frequenza delle rate. ", "Answer in JSON format"],
   "Possible sections": ["Modalità di erogazione dei fondi", "Pubblicazione"]
 },
   {
